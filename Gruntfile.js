@@ -60,7 +60,8 @@ module.exports = function(grunt) {
         scenarios: [
           {
             "label": "getbootstrap.com",
-            "url": "http://getbootstrap.com"
+            "url": "http://getbootstrap.com",
+            "selector": ".bs-docs-booticon"
           }
         ]
       }

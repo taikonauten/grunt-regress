@@ -78,7 +78,6 @@ function loop(senarios, options, func){
 
     return Promise.all(options.viewports.map(function(viewport){
 
-      var size = viewport.width+'x'+viewport.height;
       var file = filename+'-'+viewport.name+'.png';
 
       return func(senario, viewport, file, folders);
