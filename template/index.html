@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Regress</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+
+    <style><%= styles %></style>
+    <style>
+        body{
+            padding: 50px 0;
+        }
+
+        .message, .accordion, h1{
+            width: 100%;
+        }
+    </style>
+
+</head>
+<body class="ui">
+
+<div class="ui grid container">
+    <div class="row">
+        <h1 class="ui center aligned header">Regress Report</h1>
+    </div>
+    <div class="row">
+        <div class="ui large message <% print((average > 0)?'negative':'positive')%> sixteen">
+            <div class="header">Overall Mismatches</div>
+            <p><%= average %>%</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="ui accordion">
+            <% _.forEach(results, function(viewports) { %>
+            <% _.forEach(viewports, function(result) { %>
+            <div class="title">
+                <h2 class="header"><%= result.senario.label %> - <%= result.viewport.name %></h2>
+                <div class="ui message <% print((average > 0)?'negative':'positive')%>">
+                    <div class="header">Mismatches for this viewport:</div>
+                    <p><%= result.misMatchPercentage %>%</p>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="ui grid">
+                    <div class="three column row">
+                        <div class="column">
+                            <img class="fluid image" src="<%='reference/'+ result.file %>">
+                        </div>
+                        <div class="column">
+                            <img class="fluid image" src="<%= 'actual/'+ result.file %>">
+                        </div>
+                        <div class="column">
+                            <img class="fluid image" src="<%= 'diff/'+ result.file %>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <% }); %>
+            <% }); %>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script><%= script %></script>
+<script>
+    $('.ui.accordion').accordion();
+</script>
+
+</body>
+
+</html>
