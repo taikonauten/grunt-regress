@@ -36,7 +36,7 @@
             <% _.forEach(viewports, function(result) { %>
             <div class="title">
                 <h2 class="header"><%= result.senario.label %> - <%= result.viewport.name %></h2>
-                <div class="ui message <% print((average > 0)?'negative':'positive')%>">
+                <div class="ui message <% print((parseFloat(result.misMatchPercentage) > 0)?'negative':'positive')%>">
                     <div class="header">Mismatches for this viewport:</div>
                     <p><%= result.misMatchPercentage %>%</p>
                 </div>
