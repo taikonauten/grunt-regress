@@ -146,7 +146,7 @@ function compareFiles(senarios, options){
 
 function generateTemplate(grunt, options, results){
 
-  var templatePath = 'template';
+  var templatePath = path.join(__dirname, '../template');
   var data = {};
 
   var index = path.join(templatePath, 'index.html');

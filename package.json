@@ -1,7 +1,7 @@
 {
   "name": "grunt-regress",
   "description": "CSS regression Testing Plugin",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/dietaikonauten/grunt-regress",
   "author": {
     "name": "Haithem Bel Haj",
