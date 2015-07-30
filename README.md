@@ -27,6 +27,39 @@ grunt.initConfig({
   regress: {
     options: {
       // Task-specific options go here.
+    },
+    your_target: {
+      // Target-specific file lists and/or options go here.
+      options: {
+        viewports: [
+          {
+            "name": "phone",
+            "width": 320,
+            "height": 480
+          },.. 
+        ]
+      },
+
+      scenarios: [
+        {
+          "label": "getbootstrap.com",
+          "url": "http://getbootstrap.com"
+        }, ...
+      ]
+    },
+  },
+});
+```
+### Usage Examples
+
+#### Default Options
+In this example, we test the responsiveness of the bootstrap page
+
+```js
+grunt.initConfig({
+  regress: {
+    options: {
+      // Task-specific options go here.
       dest: 'css_regression'
     },
     your_target: {
@@ -59,6 +92,8 @@ grunt.initConfig({
   },
 });
 ```
+
+To generated the reference screens just execute the task `grunt regress:your_target:generate` 
 
 ### Options
 
@@ -149,49 +184,6 @@ Scale webpage `n` times.
 Type: `string`
 
 Set a custom user agent. 
-
-### Usage Examples
-
-#### Default Options
-In this example, we test the responsiveness of the bootstrap page
-
-```js
-grunt.initConfig({
-  regress: {
-    options: {
-      // Task-specific options go here.
-      dest: 'css_regression'
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-      options: {
-        viewports: [
-          {
-            "name": "phone",
-            "width": 320,
-            "height": 480
-          }, {
-            "name": "tablet_v",
-            "width": 568,
-            "height": 1024
-          }, {
-            "name": "tablet_h",
-            "width": 1024,
-            "height": 768
-          }
-        ]
-      },
-
-      scenarios: [
-        {
-          "label": "getbootstrap.com",
-          "url": "http://getbootstrap.com"
-        }, ...
-      ]
-    },
-  },
-});
-```
 
 ## Thanks
 Many thanks to:
