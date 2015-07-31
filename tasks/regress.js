@@ -71,25 +71,25 @@ function initDirs(options){
 }
 
 /**
- * Loop over every senario and viewport and apply func
- * @param senarios
+ * Loop over every scenario and viewport and apply func
+ * @param scenarios
  * @param options
  * @param func
  */
-function loop(senarios, options, func){
+function loop(scenarios, options, func){
 
   var folders = initDirs(options);
 
-  return Promise.all(senarios.map(function(senario){
+  return Promise.all(scenarios.map(function(scenario){
 
-    var url = senario.url;
-    var filename = (senario.label || url).replace(/https?:\/\//, '');
+    var url = scenario.url;
+    var filename = (scenario.label || url).replace(/https?:\/\//, '');
 
     return Promise.all(options.viewports.map(function(viewport){
 
       var file = filename+'-'+viewport.name+'.png';
 
-      return func(senario, viewport, file, folders);
+      return func(scenario, viewport, file, folders);
     }));
 
   }))
@@ -99,18 +99,18 @@ function loop(senarios, options, func){
  * generate a screenshot
  *
  * @param dest
- * @param senario
+ * @param scenario
  * @param viewport
  * @param file
  * @param folders
  * @returns {*}
  */
-function generateScreenshot(dest, senario, viewport, file, folders){
+function generateScreenshot(dest, scenario, viewport, file, folders){
 
   var size = viewport.width+'x'+viewport.height;
   var filePath = path.join(folders[dest], file);
 
-  var stream = screenshot(senario.url, size, senario);
+  var stream = screenshot(scenario.url, size, scenario);
 
   stream.pipe(fs.createWriteStream(filePath));
 
@@ -124,24 +124,24 @@ function generateScreenshot(dest, senario, viewport, file, folders){
 
 /**
  * generate all screenshots and pack them in dest
- * @param senarios
+ * @param scenarios
  * @param options
  * @param dest
  * @returns {*}
  */
-function generateScreenshots(senarios, options, dest){
+function generateScreenshots(scenarios, options, dest){
 
-  return loop(senarios, options, _.partial(generateScreenshot, dest));
+  return loop(scenarios, options, _.partial(generateScreenshot, dest));
 }
 
 /**
  * compare file
- * @param senario
+ * @param scenario
  * @param viewport
  * @param file
  * @param folders
  */
-function compareFile(senario, viewport, file, folders){
+function compareFile(scenario, viewport, file, folders){
 
   var referenceFile = path.join(folders.reference, file);
   var actualFile = path.join(folders.actual, file);
@@ -149,7 +149,7 @@ function compareFile(senario, viewport, file, folders){
 
   return diff(referenceFile, actualFile).then(function (data) {
 
-    data.senario = senario;
+    data.scenario = scenario;
     data.viewport = viewport;
     data.folders = folders;
     data.file = file;
@@ -170,17 +170,17 @@ function compareFile(senario, viewport, file, folders){
 
 /**
  * generate the actual screens and compare them
- * @param senarios
+ * @param scenarios
  * @param options
  * @returns {*}
  */
-function compareFiles(senarios, options){
+function compareFiles(scenarios, options){
 
-  return loop(senarios, options, function(senario, viewport, file, folders){
+  return loop(scenarios, options, function(scenario, viewport, file, folders){
 
-    return generateScreenshot('actual', senario, viewport, file, folders).then(function(){
+    return generateScreenshot('actual', scenario, viewport, file, folders).then(function(){
 
-      return compareFile(senario, viewport, file, folders);
+      return compareFile(scenario, viewport, file, folders);
     });
 
   })
@@ -211,7 +211,6 @@ function renderReport(grunt, options, results){
   var indexTemplate = _.template(grunt.file.read(index));
 
   grunt.file.write(dest, indexTemplate(data));
-
 
   function missSum(a, b){
 
