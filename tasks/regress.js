@@ -28,27 +28,31 @@ module.exports = function(grunt) {
     var options = this.options();
     var targetScenarios = this.data.scenarios;
 
-    var generateScreens = _.partial(generateScreenshots, targetScenarios, options);
+    var generate = _.partial(generateScreenshots, targetScenarios, options);
     var compare = _.partial(compareFiles, targetScenarios, options);
-    var generateTempl = _.partial(generateTemplate, grunt, options);
+    var render = _.partial(renderReport, grunt, options);
 
     var jobPromise;
 
     if(flags.generate){
 
-      jobPromise = generateScreens('reference')
+      jobPromise = generate('reference')
 
     }else{
 
-      jobPromise = generateScreens('actual').then(compare).then(generateTempl);
+      jobPromise = compare().then(render);
     }
 
-    jobPromise.then(done);
+    return jobPromise.then(done);
   });
-
-
 };
 
+
+/**
+ * Initialise all the needed folders
+ * @param options
+ * @returns {{reference: string, actual: string, diff: string}}
+ */
 function initDirs(options){
 
   var referenceDir = options.dest+'/reference';
@@ -66,7 +70,12 @@ function initDirs(options){
   }
 }
 
-
+/**
+ * Loop over every senario and viewport and apply func
+ * @param senarios
+ * @param options
+ * @param func
+ */
 function loop(senarios, options, func){
 
   var folders = initDirs(options);
@@ -86,65 +95,104 @@ function loop(senarios, options, func){
   }))
 }
 
+/**
+ * generate a screenshot
+ *
+ * @param dest
+ * @param senario
+ * @param viewport
+ * @param file
+ * @param folders
+ * @returns {*}
+ */
+function generateScreenshot(dest, senario, viewport, file, folders){
 
+  var size = viewport.width+'x'+viewport.height;
+  var filePath = path.join(folders[dest], file);
+
+  var stream = screenshot(senario.url, size, senario);
+
+  stream.pipe(fs.createWriteStream(filePath));
+
+  return new Promise(function(resolve, reject){
+
+    stream.on('error', reject);
+
+    stream.on('end', _.partial(resolve, filePath));
+  })
+}
+
+/**
+ * generate all screenshots and pack them in dest
+ * @param senarios
+ * @param options
+ * @param dest
+ * @returns {*}
+ */
 function generateScreenshots(senarios, options, dest){
 
-  return loop(senarios, options, function(senario, viewport, file, folders){
+  return loop(senarios, options, _.partial(generateScreenshot, dest));
+}
 
-    var size = viewport.width+'x'+viewport.height;
-    var filePath = path.join(folders[dest], file);
+/**
+ * compare file
+ * @param senario
+ * @param viewport
+ * @param file
+ * @param folders
+ */
+function compareFile(senario, viewport, file, folders){
 
-    var stream = screenshot(senario.url, size, senario);
+  var referenceFile = path.join(folders.reference, file);
+  var actualFile = path.join(folders.actual, file);
+  var diffFile = path.join(folders.diff, file);
 
-    stream.pipe(fs.createWriteStream(filePath));
+  return diff(referenceFile, actualFile).then(function (data) {
+
+    data.senario = senario;
+    data.viewport = viewport;
+    data.folders = folders;
+    data.file = file;
 
     return new Promise(function(resolve, reject){
 
-      stream.on('error', reject);
+      var diffStream = data.getDiffImage().pack();
 
-      stream.on('end', function(){
+      diffStream.pipe(fs.createWriteStream(diffFile));
 
-        resolve(filePath);
-      });
+      diffStream.on('error', reject);
+
+      diffStream.on('end', _.partial(resolve, data));
+
     })
   });
 }
 
+/**
+ * generate the actual screens and compare them
+ * @param senarios
+ * @param options
+ * @returns {*}
+ */
 function compareFiles(senarios, options){
 
   return loop(senarios, options, function(senario, viewport, file, folders){
 
-    var referenceFile = path.join(folders.reference, file);
-    var actualFile = path.join(folders.actual, file);
-    var diffFile = path.join(folders.diff, file);
+    return generateScreenshot('actual', senario, viewport, file, folders).then(function(){
 
-    return diff(referenceFile, actualFile).then(function (data) {
-
-      data.senario = senario;
-      data.viewport = viewport;
-      data.folders = folders;
-      data.file = file;
-
-      return new Promise(function(resolve, reject){
-
-        var diffStream = data.getDiffImage().pack();
-
-        diffStream.pipe(fs.createWriteStream(diffFile));
-
-        diffStream.on('error', reject);
-
-        diffStream.on('end', function () {
-
-          resolve(data)
-        });
-      })
+      return compareFile(senario, viewport, file, folders);
     });
 
-  });
+  })
 }
 
-
-function generateTemplate(grunt, options, results){
+/**
+ * Renders the report
+ * @param grunt
+ * @param options
+ * @param results
+ */
+function renderReport(grunt, options, results){
 
   var templatePath = path.join(__dirname, '../template');
   var data = {};
@@ -163,6 +211,7 @@ function generateTemplate(grunt, options, results){
   var indexTemplate = _.template(grunt.file.read(index));
 
   grunt.file.write(dest, indexTemplate(data));
+
 
   function missSum(a, b){
 

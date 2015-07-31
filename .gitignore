@@ -6,4 +6,4 @@
 node_modules
 npm-debug.log
 tmp
-.css_regression
+css_regression

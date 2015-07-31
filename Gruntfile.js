@@ -10,6 +10,8 @@
 
 module.exports = function(grunt) {
 
+  require('time-grunt')(grunt);
+
   // Project configuration.
   grunt.initConfig({
     jshint: {
@@ -60,8 +62,11 @@ module.exports = function(grunt) {
         scenarios: [
           {
             "label": "getbootstrap.com",
-            "url": "http://getbootstrap.com",
-            "selector": ".bs-docs-booticon"
+            "url": "http://getbootstrap.com"
+          },
+          {
+            "label": "getting-started",
+            "url": "http://getbootstrap.com/getting-started/"
           }
         ]
       }
