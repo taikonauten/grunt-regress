@@ -34,6 +34,7 @@
     "mkdirp": "^0.5.1",
     "node-resemble-js": "0.0.4",
     "object-assign": "^2.1.1",
+    "open": "0.0.5",
     "parse-cookie-phantomjs": "^1.0.0",
     "parse-headers": "^2.0.0",
     "phantomjs2": "^2.0.0"
