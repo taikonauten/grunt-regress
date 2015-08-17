@@ -10,9 +10,9 @@
 
 var fs = require('fs');
 var path = require('path');
-var open = require("open");
-var mkdirp = require('mkdirp');
+var open = require('open');
 var Promise = require('bluebird');
+var mkdirp = Promise.promisify(require('mkdirp'));
 var _ = require('lodash');
 
 var screenshot = require('../lib/screenshot-stream');
@@ -60,15 +60,22 @@ function initDirs(options) {
   var actualDir = options.dest + '/actual';
   var diffDir = options.dest + '/diff';
 
-  mkdirp(referenceDir);
-  mkdirp(actualDir);
-  mkdirp(diffDir);
+  return Promise.all([
 
-  return {
-    reference: referenceDir,
-    actual: actualDir,
-    diff: diffDir
-  }
+    mkdirp(referenceDir),
+    mkdirp(actualDir),
+    mkdirp(diffDir)
+
+  ]).then(function(){
+
+    return {
+      reference: referenceDir,
+      actual: actualDir,
+      diff: diffDir
+    }
+  })
+
+
 }
 
 /**
@@ -79,21 +86,23 @@ function initDirs(options) {
  */
 function loop(scenarios, options, func) {
 
-  var folders = initDirs(options);
+  return initDirs(options).then(function(folders){
 
-  return Promise.all(scenarios.map(function (scenario) {
+    return Promise.all(scenarios.map(function (scenario) {
 
-    var url = scenario.url;
-    var filename = (scenario.label || url).replace(/https?:\/\//, '');
+      var url = scenario.url;
+      var filename = (scenario.label || url).replace(/https?:\/\//, '');
 
-    return Promise.all(options.viewports.map(function (viewport) {
+      return Promise.all(options.viewports.map(function (viewport) {
 
-      var file = filename + '-' + viewport.name + '.png';
+        var file = filename + '-' + viewport.name + '.png';
 
-      return func(scenario, viewport, file, folders);
-    }));
+        return func(scenario, viewport, file, folders);
+      }));
 
-  }))
+    }))
+  });
+
 }
 
 /**
