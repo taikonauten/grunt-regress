@@ -117,7 +117,7 @@ function loop(scenarios, options, func) {
  */
 function generateScreenshot(dest, scenario, viewport, file, folders) {
 
-  var size = viewport.width + 'x' + viewport.height;
+  var size = viewport.width + 'x' + (viewport.height || 1);
   var filePath = path.join(folders[dest], file);
 
   var stream = screenshot(scenario.url, size, scenario);

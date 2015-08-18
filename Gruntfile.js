@@ -45,16 +45,13 @@ module.exports = function(grunt) {
           viewports: [
             {
               "name": "phone",
-              "width": 320,
-              "height": 480
+              "width": 320
             }, {
-              "name": "tablet_v",
-              "width": 568,
-              "height": 1024
+              "name": "tablet",
+              "width": 568
             }, {
-              "name": "tablet_h",
-              "width": 1024,
-              "height": 768
+              "name": "desktop",
+              "width": 1280
             }
           ]
         },
@@ -63,10 +60,6 @@ module.exports = function(grunt) {
           {
             "label": "getbootstrap.com",
             "url": "http://getbootstrap.com"
-          },
-          {
-            "label": "getting-started",
-            "url": "http://getbootstrap.com/getting-started/"
           }
         ]
       }
