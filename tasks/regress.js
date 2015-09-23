@@ -229,6 +229,3 @@ function renderReport(grunt, options, results) {
     return a + parseFloat(b.misMatchPercentage);
   }
 }
-
-
-
