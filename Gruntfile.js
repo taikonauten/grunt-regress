@@ -38,9 +38,11 @@ module.exports = function(grunt) {
         dest: 'css_regression'
       },
 
-      task: {
+      test: {
 
         options: {
+
+          hide: ['.btn'],
 
           viewports: [
             {
