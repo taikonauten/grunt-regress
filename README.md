@@ -77,7 +77,7 @@ To test your designs and get a nice report just run `grunt regress:your_target`.
 #### options.dest
 Type: `String`
 
-The destination path where the generated test file will go. 
+The destination path where the generated test file will go. **Make sure to create the folder before firing up the task**
 
 #### options.viewports
 Type: `Array`
