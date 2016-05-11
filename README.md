@@ -1,6 +1,6 @@
 # grunt-regress
 
-> CSS regression Testing Plugin based on PhantomJS 2
+> visual regression testing for grunt - based on PhantomJS 2
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
