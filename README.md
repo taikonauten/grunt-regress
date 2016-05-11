@@ -22,49 +22,22 @@ grunt.loadNpmTasks('grunt-regress');
 ### Overview
 In your project's Gruntfile, add a section named `regress` to the data object passed into `grunt.initConfig()`.
 
-```js
-grunt.initConfig({
-  regress: {
-    options: {
-      // Task-specific options go here.
-    },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-      options: {
-        viewports: [
-          {
-            "name": "phone",
-            "width": 320,
-            "height": 480
-          },.. 
-        ]
-      },
-
-      scenarios: [
-        {
-          "label": "getbootstrap.com",
-          "url": "http://getbootstrap.com"
-        }, ...
-      ]
-    },
-  },
-});
-```
 ### Usage Examples
 
 #### Default Options
-In this example, we test the responsiveness of the bootstrap page
+In this example, we test the responsiveness of the bootstrap button.
 
 ```js
 grunt.initConfig({
   regress: {
     options: {
-      // Task-specific options go here.
-      dest: 'css_regression'
+      // destination folder for the tests
+      dest: 'css_regression' // this is required
     },
     your_target: {
       // Target-specific file lists and/or options go here.
       options: {
+        // viewports you want to test for all scenarios
         viewports: [
           {
             "name": "phone",
@@ -81,11 +54,14 @@ grunt.initConfig({
           }
         ]
       },
-
+      // the pages
       scenarios: [
         {
-          "label": "getbootstrap.com",
-          "url": "http://getbootstrap.com"
+          "label": "button", // some label
+          "url": "http://getbootstrap.com", // the test page
+          "delay": 1, // wait one second
+          "selector": ".bs-docs-masthead .btn", // select an element out
+          "hide": "#carbonads" // hide an element
         }, ...
       ]
     },
@@ -93,7 +69,8 @@ grunt.initConfig({
 });
 ```
 
-To generated the reference screens just execute the task `grunt regress:your_target:generate` 
+To generated the reference screens just execute the task `grunt regress:your_target:generate`.
+To test your designs and get a nice report just run `grunt regress:your_target`.
 
 ### Options
 
@@ -196,3 +173,5 @@ And to all the community You guys are awesome :)
 ## License
 
 MIT
+
+Made with ♥ by [taikonauten](https://taikonauten.com)
